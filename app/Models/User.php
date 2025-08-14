@@ -49,7 +49,7 @@ class User extends Authenticatable
     }
 
     protected $fillable = [
-        'first_name', 'last_name', 'email', 'password', 'department_id', 'position_id', 'is_active',
+        'name', 'email', 'password', 'department_id', 'position_id', 'is_active',
     ];
 
     public function department()
@@ -65,8 +65,7 @@ class User extends Authenticatable
     public static function validateStore($data)
     {
         return Validator::make($data, [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
             'department_id' => 'nullable|exists:departments,id',
@@ -77,8 +76,7 @@ class User extends Authenticatable
     public static function validateUpdate($id, $data)
     {
         return Validator::make($data, [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'email' => [
                 'required',
                 'email',
