@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::create('permissions', function (Blueprint $table) {
-        //     $table->id();
-        //     $table->string('name')->unique();
-        //     $table->text('description')->nullable();
-        //     $table->timestamps();
-        // });
+        Schema::create('role_permissions', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('role_id')->constrained()->onDelete('cascade');
+            $table->foreignId('permission_id')->constrained()->onDelete('cascade');
+        });
     }
 
     /**
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('role_permissions');
     }
 };
