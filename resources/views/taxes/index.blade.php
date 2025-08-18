@@ -39,17 +39,52 @@
 
         {{-- Filters --}}
         <form method="GET" action="{{ route('taxes.index') }}" class="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {{-- Employee --}}
             <div>
-                <label class="block text-sm font-medium text-gray-700">Employee</label>
-                <select name="employee_id" class="w-full border px-3 py-2 rounded">
-                    <option value="">All Employees</option>
-                    @foreach ($employees as $employee)
-                        <option value="{{ $employee->id }}"
-                            {{ request('employee_id') == $employee->id ? 'selected' : '' }}>
-                            {{ $employee->first_name }} {{ $employee->last_name }}
-                        </option>
-                    @endforeach
-                </select>
+                <label class="block mb-1">Employee</label>
+                <div x-data="{
+                    employees: {{ Js::from(
+                        $employees->map(
+                            fn($e) => [
+                                'id' => $e->id,
+                                'name' => $e->first_name . ' ' . $e->last_name,
+                            ],
+                        ),
+                    ) }},
+                    search: '',
+                    open: false,
+                    selected: null,
+                    get filtered() {
+                        return this.search === '' ?
+                            this.employees :
+                            this.employees.filter(e =>
+                                e.name.toLowerCase().includes(this.search.toLowerCase())
+                            );
+                    },
+                    select(emp) {
+                        this.selected = emp;
+                        this.search = emp.name;
+                        this.open = false;
+                    }
+                }" class="relative w-full">
+                    <!-- Visible Input -->
+                    <input type="text" x-model="search" @focus="open = true" @click.away="open = false"
+                        @keydown.escape.window="open = false" class="w-full border px-3 py-2 rounded"
+                        placeholder="Select employee">
+
+                    <!-- Dropdown List -->
+                    <div x-show="open"
+                        class="absolute z-10 mt-1 w-full bg-white border rounded shadow max-h-60 overflow-y-auto">
+                        <template x-for="emp in filtered" :key="emp.id">
+                            <div @click="select(emp)" class="px-3 py-2 hover:bg-blue-100 cursor-pointer"
+                                x-text="emp.name"></div>
+                        </template>
+                        <div x-show="filtered.length === 0" class="px-3 py-2 text-gray-500">No results</div>
+                    </div>
+
+                    <!-- Hidden Input -->
+                    <input type="hidden" name="employee_id" :value="selected?.id">
+                </div>
             </div>
 
             <div class="flex items-end space-x-2">
