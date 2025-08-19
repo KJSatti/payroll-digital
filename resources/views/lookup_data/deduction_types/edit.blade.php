@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="max-w-4xl mx-auto py-12">
+    <div class="max-w-6xl mx-auto py-12">
         <div class="bg-white p-6 rounded-lg shadow">
             <form method="POST" action="{{ route('deduction-types.update', $benefitType->id) }}">
                 @csrf
